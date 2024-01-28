@@ -1,6 +1,5 @@
 from ursina import *
 from enum import Enum, auto
-from math import sin, cos
 
 app = Ursina()
 
