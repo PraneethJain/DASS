@@ -78,6 +78,17 @@ class Point(Sprite):
                                 state.vulture_point.to_empty()
                                 self.to_vulture()
                                 state.next_turn()
+                            elif (
+                                crow_index := state.move_possible_capture(self)
+                            ) is not None:
+                                if (
+                                    Point.inner_points[crow_index].point_state
+                                    == PointState.Crow
+                                ):
+                                    Point.inner_points[crow_index].to_empty()
+                                    state.vulture_point.to_empty()
+                                    self.to_vulture()
+                                    state.next_turn()
             case Turn.Crow:
                 if state.num_crows == state.MAX_CROWS:
                     match self.point_state:
@@ -155,6 +166,45 @@ class State:
                         )
                     case PointType.Outer:
                         return False
+
+    def move_possible_capture(self, end: Point) -> int | None:
+        """Checks if moving to end is possible while capturing a crow
+
+        Args:
+            end (Point): end point to move to
+
+        Raises:
+            Exception: if called during crow's turn
+
+        Returns:
+            int | None: index of captured crow, None if no capture possible
+        """
+        if self.turn == Turn.Crow:
+            raise Exception("Capture only possible during vulture's turn")
+        start = self.vulture_point
+        match start.point_type:
+            case PointType.Inner:
+                match end.point_type:
+                    case PointType.Inner:
+                        return None
+                    case PointType.Outer:
+                        if end.index == (start.index + 1) % 5:
+                            return end.index
+                        elif end.index == (start.index - 2) % 5:
+                            return (start.index - 1) % 5
+                        else:
+                            return None
+            case PointType.Outer:
+                match end.point_type:
+                    case PointType.Inner:
+                        if end.index == (start.index - 1) % 5:
+                            return start.index
+                        elif end.index == (start.index + 2) % 5:
+                            return (start.index + 1) % 5
+                        else:
+                            return None
+                    case PointType.Outer:
+                        return None
 
 
 if __name__ == "__main__":
