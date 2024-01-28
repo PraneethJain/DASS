@@ -41,6 +41,25 @@ class Point(Sprite):
             case PointType.Inner:
                 Point.inner_points.append(self)
 
+    @classmethod
+    def reset(cls) -> None:
+        for point in cls.outer_points + cls.inner_points:
+            point.to_empty()
+
+    @classmethod
+    def can_vulture_move(cls) -> bool:
+        return any(
+            state.move_possible_adjacent(point)
+            or (
+                (idx := state.move_possible_capture(point)) is not None
+                and Point.inner_points[idx].point_state == PointState.Crow
+            )
+            for point in filter(
+                lambda point: point.point_state == PointState.Empty,
+                cls.outer_points + cls.inner_points,
+            )
+        )
+
     def to_empty(self) -> None:
         self.point_state = PointState.Empty
         self.color = color.white
@@ -89,6 +108,7 @@ class Point(Sprite):
                                     Point.inner_points[crow_index].to_empty()
                                     state.vulture_point.to_empty()
                                     self.to_vulture()
+                                    state.num_captured += 1
                                     state.next_turn()
             case Turn.Crow:
                 if state.num_crows == state.MAX_CROWS:
@@ -113,15 +133,30 @@ class Point(Sprite):
 
 class State:
     def __init__(self) -> None:
+        self.reset()
+
+    def reset(self) -> None:
         self.turn = Turn.Crow
         self.num_crows = 0
         self.num_vultures = 0
         self.MAX_CROWS = 7
+        self.num_captured = 0
 
         self.selected_crow: None | Point = None
         self.vulture_point: None | Point = None
 
+        Point.reset()
+
     def next_turn(self) -> None:
+        if self.num_captured == 4:
+            button = Button("Vulture Wins!")
+
+            def ok():
+                button.disable()
+                self.reset()
+
+            button.on_click = ok
+
         match self.turn:
             case Turn.Crow:
                 if self.num_crows < self.MAX_CROWS:
@@ -129,6 +164,16 @@ class State:
                 self.turn = Turn.Vulture
                 if self.vulture_point is not None:
                     self.vulture_point.scale = 0.5
+
+                if self.vulture_point is not None and not Point.can_vulture_move():
+                    button = Button("Kaooa Wins!")
+
+                    def ok():
+                        button.disable()
+                        self.reset()
+
+                    button.on_click = ok
+
             case Turn.Vulture:
                 self.vulture_point.scale = 0.3
                 if self.num_vultures == 0:
