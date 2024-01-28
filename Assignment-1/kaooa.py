@@ -1,7 +1,13 @@
 from ursina import *
 from enum import Enum, auto
 
-app = Ursina()
+app = Ursina(
+    title="Kaooa",
+    icon="vulture.ico",
+    borderless=False,
+    development_mode=False,
+    size=Vec2(1000, 800),
+)
 
 window.color = color.black
 camera.orthographic = True
