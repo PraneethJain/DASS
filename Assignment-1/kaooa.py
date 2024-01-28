@@ -26,16 +26,21 @@ class PointType(Enum):
 
 
 class Point(Sprite):
-    instances = []
+    outer_points = []
+    inner_points = []
 
     def __init__(self, x: float, y: float, point_type: PointType, index: int) -> None:
         super().__init__(texture=None, model="circle", collider="sphere")
         self.to_empty()
         self.x = x
         self.y = y
-        self.point_type = point_type
         self.index = index
-        Point.instances.append(self)
+        self.point_type = point_type
+        match self.point_type:
+            case PointType.Outer:
+                Point.outer_points.append(self)
+            case PointType.Inner:
+                Point.inner_points.append(self)
 
     def to_empty(self) -> None:
         self.point_state = PointState.Empty
@@ -50,8 +55,8 @@ class Point(Sprite):
     def to_vulture(self) -> None:
         self.point_state = PointState.Vulture
         self.color = color.red
-        state.vulture_point = self
         self.scale = 0.3
+        state.vulture_point = self
 
     def on_click(self) -> None:
         match state.turn:
@@ -156,11 +161,11 @@ class State:
 if __name__ == "__main__":
     state = State()
     d = sin(126 * pi / 180) / sin(18 * pi / 180)
-    inner_points = [
+    [
         Point(sin(2 * pi * i / 5), cos(2 * pi * i / 5), PointType.Inner, i)
         for i in range(5)
     ]
-    outer_points = [
+    [
         Point(
             d * sin(2 * pi * i / 5 + pi / 5),
             d * cos(2 * pi * i / 5 + pi / 5),
@@ -173,12 +178,12 @@ if __name__ == "__main__":
         Sprite(
             model="line",
             position=(
-                (outer_points[i].x + outer_points[(i + 2) % 5].x) / 2,
-                (outer_points[i].y + outer_points[(i + 2) % 5].y) / 2,
+                (Point.outer_points[i].x + Point.outer_points[(i + 2) % 5].x) / 2,
+                (Point.outer_points[i].y + Point.outer_points[(i + 2) % 5].y) / 2,
                 1,
             ),
             rotation=(0, 0, 72 * (i - 1)),
-            scale=distance_2d(outer_points[0], outer_points[2]),
+            scale=distance_2d(Point.outer_points[0], Point.outer_points[2]),
         )
         for i in range(5)
     ]
