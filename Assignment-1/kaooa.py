@@ -21,13 +21,19 @@ class State:
         self.num_vultures = 0
         self.MAX_CROWS = 7
 
+        self.selected_crow = None
+        self.vulture_point = None
+
     def next_turn(self) -> None:
         match self.turn:
             case Turn.Crow:
                 if self.num_crows < self.MAX_CROWS:
                     self.num_crows += 1
                 self.turn = Turn.Vulture
+                if self.vulture_point is not None:
+                    self.vulture_point.scale = 0.5
             case Turn.Vulture:
+                self.vulture_point.scale = 0.3
                 if self.num_vultures == 0:
                     self.num_vultures += 1
                 self.turn = Turn.Crow
@@ -43,7 +49,7 @@ class Point(Sprite):
     instances = []
 
     def __init__(self, x, y) -> None:
-        super().__init__(texture=None, model="circle", collider="sphere", scale=0.3)
+        super().__init__(texture=None, model="circle", collider="sphere")
         self.to_empty()
         self.x = x
         self.y = y
@@ -52,33 +58,62 @@ class Point(Sprite):
     def to_empty(self) -> None:
         self.point_state = PointState.Empty
         self.color = color.white
+        self.scale = 0.3
 
     def to_crow(self) -> None:
         self.point_state = PointState.Crow
         self.color = color.green
+        self.scale = 0.3
 
     def to_vulture(self) -> None:
         self.point_state = PointState.Vulture
         self.color = color.red
+        state.vulture_point = self
+        self.scale = 0.3
 
     def on_click(self) -> None:
-        if self.point_state != PointState.Empty:
-            print("Point not empty")
-            return
-
         match state.turn:
             case Turn.Vulture:
                 if state.num_vultures == 0:
-                    self.to_vulture()
-                    state.next_turn()
+                    if self.point_state == PointState.Empty:
+                        self.to_vulture()
+                        state.next_turn()
                 else:
-                    print("TODO")
+                    match self.point_state:
+                        case PointState.Vulture:
+                            # Ignore
+                            pass
+                        case PointState.Crow:
+                            # Try to eat the crow
+                            pass
+                        case PointState.Empty:
+                            # Try to move vulture here
+                            state.vulture_point.to_empty()
+                            self.to_vulture()
+                            state.next_turn()
             case Turn.Crow:
                 if state.num_crows == state.MAX_CROWS:
-                    print("TODO")
+                    match self.point_state:
+                        case PointState.Vulture:
+                            # Ignore
+                            pass
+                        case PointState.Crow:
+                            # Select this point
+                            if state.selected_crow is not None:
+                                state.selected_crow.scale = 0.3
+                            state.selected_crow = self
+                            state.selected_crow.scale = 0.5
+                        case PointState.Empty:
+                            # Try to move selected point here
+                            if state.selected_crow is not None:
+                                state.selected_crow.to_empty()
+                                state.selected_crow = None
+                                self.to_crow()
+                                state.next_turn()
                 else:
-                    self.to_crow()
-                    state.next_turn()
+                    if self.point_state == PointState.Empty:
+                        self.to_crow()
+                        state.next_turn()
 
 
 if __name__ == "__main__":
