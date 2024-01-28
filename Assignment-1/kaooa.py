@@ -70,7 +70,7 @@ class Point(Sprite):
                             # Ignore
                             pass
                         case PointState.Crow:
-                            # Try to eat the crow
+                            # Ignore
                             pass
                         case PointState.Empty:
                             # Try to move vulture here
@@ -78,6 +78,7 @@ class Point(Sprite):
                                 state.vulture_point.to_empty()
                                 self.to_vulture()
                                 state.next_turn()
+                            # Or capture a crow in between
                             elif (
                                 crow_index := state.move_possible_capture(self)
                             ) is not None:
@@ -115,7 +116,7 @@ class State:
         self.turn = Turn.Crow
         self.num_crows = 0
         self.num_vultures = 0
-        self.MAX_CROWS = 3
+        self.MAX_CROWS = 7
 
         self.selected_crow: None | Point = None
         self.vulture_point: None | Point = None
@@ -207,8 +208,7 @@ class State:
                         return None
 
 
-if __name__ == "__main__":
-    state = State()
+def construct_star() -> None:
     d = sin(126 * pi / 180) / sin(18 * pi / 180)
     [
         Point(sin(2 * pi * i / 5), cos(2 * pi * i / 5), PointType.Inner, i)
@@ -223,7 +223,7 @@ if __name__ == "__main__":
         )
         for i in range(5)
     ]
-    lines = [
+    [
         Sprite(
             model="line",
             position=(
@@ -236,4 +236,9 @@ if __name__ == "__main__":
         )
         for i in range(5)
     ]
+
+
+if __name__ == "__main__":
+    state = State()
+    construct_star()
     app.run()
