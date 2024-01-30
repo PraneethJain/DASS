@@ -1,9 +1,61 @@
+$accent: #008888
+
+#Input {
+    background: black;
+}
+
 #body {
-    height: 100%;
+    background: black;
+}
+
+#operations {
+    height: auto;
     width: 100%;
+    content-align: center middle;
+    padding: 1;
+    Input {
+        # margin-top: 1;
+        width: 45%;
+    }
+}
+
+#buttons {
+    content-align: center middle;
+    align: center middle;
+    margin: 1;
 }
 
 DataTable {
-    width: 85%;
-    height: 80%;
+    width: auto;
+    height: 100%;
+    color: white;
+    text-align: center;
+    content-align: center middle;
+    text-align: center;
+}
+
+.datatable--header, .datatable--header-hover {
+    background: $accent 70%;
+    color: white;
+}
+
+.datatable--cursor {
+    background: $accent;
+}
+
+.datatable--hover {
+    background: $accent 20%;
+}
+
+Button {
+    background: black;
+    border: tall white;
+    height: 3;
+
+    &:hover {
+        background: $accent 70%;
+    }
+    &:focus {
+        text-style: none;
+    }
 }

@@ -1,7 +1,7 @@
 from textual import on
 from textual.app import App, ComposeResult
 from textual.binding import Binding
-from textual.widgets import Button, DataTable, Footer, Input, Static
+from textual.widgets import Button, DataTable, Input
 from textual.containers import Horizontal, Vertical
 from textual.screen import Screen
 import csv
@@ -26,12 +26,14 @@ class Database:
         self.data.append(data)
         self.save_data()
 
-    def remove_data(self, index: int) -> None:
-        self.data = self.data[:index] + self.data[index + 1 :]
+    def remove_data(self, data: list[str]) -> None:
+        self.data = list(filter(lambda d: d != data, self.data))
         self.save_data()
 
-    def update_data(self, data: list[str], index: int) -> None:
-        self.data[index] = data
+    def update_data(self, old_data: list[str], new_data: list[str]) -> None:
+        for i, d in enumerate(self.data):
+            if d == old_data:
+                self.data[i] = new_data
         self.save_data()
 
     def get_headers(self) -> list[str]:
@@ -55,21 +57,17 @@ class InputEntry(Screen):
         self,
         fields: list[str],
         operation: str,
-        index: int | None = None,
-        name: str | None = None,
-        id: str | None = None,
-        classes: str | None = None,
     ) -> None:
-        super().__init__(name, id, classes)
+        super().__init__(name=None, id="Input", classes=None)
         self.operation = operation
         match self.operation:
             case "insert":
                 self.input_widgets = [Input(placeholder=field) for field in fields]
             case "update":
+                self.old_data = fields
                 self.input_widgets = [
                     Input(value=field, placeholder=field) for field in fields
                 ]
-                self.index = index
         self.input_widgets[2].type = "integer"  # Roll Number
         self.input_widgets[-1].type = "integer"  # Total Marks
         self.input_widgets[-2].type = "integer"  # Scored Marks
@@ -83,7 +81,7 @@ class InputEntry(Screen):
                     db.add_data([wid.value for wid in self.input_widgets])
                 case "update":
                     db.update_data(
-                        [wid.value for wid in self.input_widgets], self.index
+                        self.old_data, [wid.value for wid in self.input_widgets]
                     )
         self.app.pop_screen()
         table = self.app.query_one(DataTable)
@@ -93,91 +91,68 @@ class InputEntry(Screen):
 
     def compose(self) -> ComposeResult:
         yield from self.input_widgets
-        yield Button("Submit", id="submit")
-        yield Button("Cancel", id="cancel")
-
-
-class Search(Screen):
-    BINDINGS = [("escape,space,q,question_mark", "pop_screen", "Close")]
-
-    def __init__(
-        self,
-        name: str | None = None,
-        id: str | None = None,
-        classes: str | None = None,
-    ) -> None:
-        super().__init__(name, id, classes)
-        self.input = Input(placeholder="Roll Number")
-        self.results_table = DataTable(
-            zebra_stripes=True, header_height=2, cursor_type="none"
-        )
-        self.results_table.add_columns(*db.get_headers())
-        self.data = db.get_data()
-        self.results_table.add_rows(self.data)
-
-    @on(Input.Changed)
-    def update_results_table(self, event: Input.Changed) -> None:
-        current_data: list[list[str]] = []
-        for row in self.data:
-            if event.value in row[2]:  # if number entered is part of roll number
-                current_data.append(row)
-        self.results_table.clear()
-        self.results_table.add_rows(current_data)
-
-    def compose(self) -> ComposeResult:
-        yield self.input
-        yield self.results_table
-        yield Static("Escape to close")
+        with Horizontal(id="buttons"):
+            yield Button("Submit", id="submit")
+            yield Button("Cancel", id="cancel")
 
 
 class Table(Screen):
-    def compose(self) -> ComposeResult:
-        with Horizontal(id="body"):
-            yield DataTable(
-                zebra_stripes=True,
-                header_height=2,
-                cursor_type="row",
-            )
+    def __init__(self) -> None:
+        super().__init__(name=None, id=None, classes=None)
+        self.datatable = DataTable(header_height=2, cursor_type="row")
+        self.search_input = Input(placeholder="Search any field")
 
-            with Vertical(id="operation-buttons"):
+    def compose(self) -> ComposeResult:
+        with Vertical(id="body"):
+            with Horizontal(id="operations"):
+                yield self.search_input
                 yield Button("Insert", id="insert-button")
                 yield Button("Update", id="update-button")
                 yield Button("Delete", id="delete-button")
-                yield Button("Search", id="search-button")
-        yield Footer()
+            yield self.datatable
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button.id is None:
             return
 
-        table = self.query_one(DataTable)
         match event.button.id:
             case "insert-button":
                 self.app.push_screen(InputEntry(db.get_headers(), "insert"))
             case "update-button":
                 self.app.push_screen(
                     InputEntry(
-                        db.get_data()[table.cursor_row], "update", table.cursor_row
+                        self.datatable.get_row_at(self.datatable.cursor_row), "update"
                     )
                 )
             case "delete-button":
-                db.remove_data(table.cursor_row)
-            case "search-button":
-                self.app.push_screen(Search())
-        table.clear(True)
-        table.add_columns(*db.get_headers())
-        table.add_rows(db.get_data())
+                db.remove_data(self.datatable.get_row_at(self.datatable.cursor_row))
+
+        self.update_table()
+
+    @on(Input.Changed)
+    def update_datatable(self, _: Input.Changed) -> None:
+        self.update_table()
+
+    def update_table(self) -> None:
+        self.datatable.clear()
+        self.datatable.add_rows(
+            list(
+                filter(
+                    lambda row: any(self.search_input.value in val for val in row),
+                    db.get_data(),
+                ),
+            )
+        )
 
     def on_mount(self) -> None:
-        table = self.query_one(DataTable)
-        table.add_columns(*db.get_headers())
-        table.add_rows(db.get_data())
+        self.datatable.add_columns(*db.get_headers())
+        self.datatable.add_rows(db.get_data())
 
 
 class MarksDirectory(App[None]):
     CSS_PATH = "mdirectory.tcss"
     SCREENS = {}
-    BINDINGS = [Binding("q", "quit", "Quit")]
+    BINDINGS = [Binding("escape", "quit", "Quit")]
     TITLE = "Marks Directory"
 
     def on_mount(self) -> None:
