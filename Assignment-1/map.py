@@ -39,18 +39,13 @@ class Walk(Scene):
     def construct(self):
         zoom = 0.5
 
-        directions_unparsed = [
-            ("3cm", "N"),
-            ("3mm", "W"),
-            ("3mm", "S"),
-            ("3mm", "E"),
-            ("3mm", "E"),
-        ]
+        with open("./map.txt") as f:
+            directions_unparsed = [line.strip().split() for line in f.readlines()]
         origin = Dot(radius=DEFAULT_DOT_RADIUS * zoom)
         dot = Dot(radius=DEFAULT_DOT_RADIUS * 2 * zoom, color=WHITE)
         self.play(Write(origin))
         self.play(Write(dot))
-        text = Text("", font_size=zoom * DEFAULT_FONT_SIZE / 2.5).to_edge(UP)
+        text = Text("", font_size=zoom * DEFAULT_FONT_SIZE / 1.5).to_edge(UP)
         lines = []
         for dir_text, dir in zip(
             directions_unparsed, self.parse_directions(directions_unparsed)
@@ -65,7 +60,7 @@ class Walk(Scene):
                     text,
                     Text(
                         f"{dir_text[0]} {dir_text[1]}",
-                        font_size=zoom * DEFAULT_FONT_SIZE / 2.5,
+                        font_size=zoom * DEFAULT_FONT_SIZE / 1.5,
                     ).to_edge(UP),
                 ),
             )
@@ -100,7 +95,7 @@ class Walk(Scene):
                 direction_string = "No Movement!"
         distance = Text(
             f"{round(final_line.get_length()/(zoom*0.2), 2)} mm {direction_string}",
-            font_size=zoom * DEFAULT_FONT_SIZE / 2,
+            font_size=zoom * DEFAULT_FONT_SIZE,
         ).to_edge(DOWN)
         self.play(Write(final_line))
         self.play(Wiggle(final_line), Write(distance))
