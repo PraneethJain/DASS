@@ -53,17 +53,28 @@ class Point(Sprite):
             point.to_empty()
 
     @classmethod
-    def can_vulture_move(cls) -> bool:
-        return any(
-            state.move_possible_adjacent(point)
-            or (
-                (idx := state.move_possible_capture(point)) is not None
-                and Point.inner_points[idx].point_state == PointState.Crow
-            )
-            for point in filter(
+    def empty_points(cls):
+        return list(
+            filter(
                 lambda point: point.point_state == PointState.Empty,
                 cls.outer_points + cls.inner_points,
             )
+        )
+
+    @classmethod
+    def can_vulture_move(cls) -> bool:
+        return cls.can_vulture_move_capture() or cls.can_vulture_move_adjacent()
+
+    @classmethod
+    def can_vulture_move_adjacent(cls) -> bool:
+        return any(state.move_possible_adjacent(point) for point in cls.empty_points())
+
+    @classmethod
+    def can_vulture_move_capture(cls) -> bool:
+        return any(
+            (idx := state.move_possible_capture(point)) is not None
+            and Point.inner_points[idx].point_state == PointState.Crow
+            for point in cls.empty_points()
         )
 
     def to_empty(self) -> None:
@@ -99,7 +110,10 @@ class Point(Sprite):
                             pass
                         case PointState.Empty:
                             # Try to move vulture here
-                            if state.move_possible_adjacent(self):
+                            if (
+                                state.move_possible_adjacent(self)
+                                and not self.can_vulture_move_capture()
+                            ):
                                 state.vulture_point.to_empty()
                                 self.to_vulture()
                                 state.next_turn()
