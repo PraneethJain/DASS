@@ -1,0 +1,17 @@
+************* Module kaooa3
+kaooa3.py:152:32: E1101: Instance of 'State' has no 'to_empty' member (no-member)
+kaooa3.py:164:36: E1101: Instance of 'State' has no 'to_empty' member (no-member)
+kaooa3.py:297:14: E1101: Instance of 'State' has no 'point_type' member (no-member)
+kaooa3.py:303:41: E1101: Instance of 'State' has no 'index' member (no-member)
+kaooa3.py:305:41: E1101: Instance of 'State' has no 'index' member (no-member)
+kaooa3.py:306:35: E1101: Instance of 'State' has no 'index' member (no-member)
+kaooa3.py:311:41: E1101: Instance of 'State' has no 'index' member (no-member)
+kaooa3.py:312:34: E1101: Instance of 'State' has no 'index' member (no-member)
+kaooa3.py:313:41: E1101: Instance of 'State' has no 'index' member (no-member)
+kaooa3.py:314:35: E1101: Instance of 'State' has no 'index' member (no-member)
+kaooa3.py:234:20: W0201: Attribute 'scale' defined outside __init__ (attribute-defined-outside-init)
+kaooa3.py:241:16: W0201: Attribute 'scale' defined outside __init__ (attribute-defined-outside-init)
+
+------------------------------------------------------------------
+Your code has been rated at 6.96/10 (previous run: 6.96/10, +0.00)
+
