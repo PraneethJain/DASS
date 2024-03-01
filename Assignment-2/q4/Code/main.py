@@ -1,6 +1,7 @@
 """Script to analyse student scores"""
 
 Student = dict[str, list[int]]
+import json
 
 
 def calculate_average(students: list[Student]) -> dict[str, float]:
@@ -31,7 +32,8 @@ def find_highest_scorer(students: list[Student]) -> tuple[str, list[str]]:
 
 
 def main() -> None:
-    students = []
+    with open("../Dataset/dataset.json", "r") as f:
+        students: list[Student] = json.load(f)
     n = -1
     while n <= 0:
         try:
