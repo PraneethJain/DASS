@@ -30,12 +30,38 @@ def find_highest_scorer(students: list[Student]) -> tuple[str, list[str]]:
     )
 
 
-if __name__ == "__main__":
-    students = [
-        {"a": [1, 2, 300, 4]},
-        {"b": [10, 20, 30, 40]},
-        {"c": [1000, 17, 21, 39]},
-    ]
+def main() -> None:
+    students = []
+    n = -1
+    while n <= 0:
+        try:
+            n = int(input("Number of subjects: "))
+        except ValueError as e:
+            print(e)
 
-    x = find_highest_scorer(students)
-    print(x)
+    while True:
+        name = input("Enter student name (empty to stop): ")
+        if not name:
+            break
+
+        scores = []
+        while not scores:
+            print("Enter space separted integer scores")
+            try:
+                scores = list(map(int, input().split()))
+            except ValueError as e:
+                print(e)
+
+        students.append({name: scores})
+
+    averages = calculate_average(students)
+    (highest_average_scorer, subject_highests) = find_highest_scorer(students)
+
+    print()
+    print(f"The averages of the students are: {averages}")
+    print(f"The highest average scorer is {highest_average_scorer}")
+    print(f"The subject wise highest scorers in order are {subject_highests}")
+
+
+if __name__ == "__main__":
+    main()
