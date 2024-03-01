@@ -3,6 +3,7 @@ import sys
 
 sys.path.insert(0, "..")
 from Code.main import calculate_average, find_highest_scorer
+from Dataset.gen import random_name, random_scores
 
 
 def test_calculate_average():
@@ -44,3 +45,15 @@ def test_find_highest_scorer():
 
     with pytest.raises(ValueError):
         find_highest_scorer([])
+
+
+def test_random_name():
+    assert len(random_name(5)) == 5
+    assert len(random_name(2)) == 2
+    assert len(random_name(10)) == 10
+
+
+def test_random_scores():
+    assert len(random_scores(5)) == 5
+    assert len(random_scores(2)) == 2
+    assert len(random_scores(10)) == 10
