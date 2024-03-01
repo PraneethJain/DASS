@@ -1,7 +1,7 @@
 """Kaprekar Routine"""
 
 
-def kaprekar(s: str) -> list[int]:
+def kaprekar(s: str | int) -> list[int]:
     """Computes the kaprekar routine
 
     Args:
@@ -13,6 +13,7 @@ def kaprekar(s: str) -> list[int]:
     Returns:
         list[int]: The kaprekar sequence of the number
     """
+    s = str(s).rjust(4, "0")
     if not (
         s.isdigit() and len(s) == 4 and s not in {"0000", "1111"} and len(set(s)) >= 2
     ):
@@ -23,7 +24,7 @@ def kaprekar(s: str) -> list[int]:
         prev = res[-1]
         inc = int("".join(sorted(prev)))
         dec = int("".join(sorted(prev, reverse=True)))
-        cur = f"{dec - inc:04}"
+        cur = str(dec - inc).rjust(4, "0")
         if cur == prev:
             break
         res.append(cur)
@@ -31,4 +32,4 @@ def kaprekar(s: str) -> list[int]:
 
 
 if __name__ == "__main__":
-    print(kaprekar("9218"))
+    print(kaprekar(input()))
