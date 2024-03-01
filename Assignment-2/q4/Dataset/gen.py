@@ -21,10 +21,10 @@ def generate_random_dataset(
     num_students: int = 10, name_length: int = 5, num_subjets: int = 5
 ) -> list[Student]:
     """Returns a randomly generated dataset"""
-    return {
-        random_name(name_length): random_scores(num_subjets)
+    return [
+        {random_name(name_length): random_scores(num_subjets)}
         for _ in range(num_students)
-    }
+    ]
 
 
 if __name__ == "__main__":
