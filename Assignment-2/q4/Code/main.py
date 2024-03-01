@@ -1,7 +1,7 @@
 """Script to analyse student scores"""
+import json
 
 Student = dict[str, list[int]]
-import json
 
 
 def calculate_average(students: list[Student]) -> dict[str, float]:
