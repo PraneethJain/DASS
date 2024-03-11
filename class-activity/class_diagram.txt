@@ -1,12 +1,5 @@
 @startuml
 
-interface SubmarinePod {
-    + openOuterLatch(): void
-    + openInnerLatch(): void
-    + closeOuterLatch(): void
-    + closeInnerLatch(): void
-}
-
 interface ControlPanel {
     + openOuterLatch(): void
     + openInnerLatch(): void
@@ -38,23 +31,10 @@ class EntryExitChamber {
     - waterFilled: boolean
     - fillingPaused: boolean
     - drainingPaused: boolean
-    + openOuterLatch(): void
-    + openInnerLatch(): void
-    + closeOuterLatch(): void
-    + closeInnerLatch(): void
-    + fillWithWater(): void
-    + drainWater(): void
-    + pauseFilling(): void
-    + pauseDraining(): void
-    + resumeFilling(): void
-    + resumeDraining(): void
 }
 
-SubmarinePod -- EntryExitChamber
+ControlPanel -- OuterLatch
+ControlPanel -- InnerLatch
 ControlPanel -- EntryExitChamber
-
-EntryExitChamber *-- ControlPanel
-EntryExitChamber *-- OuterLatch
-EntryExitChamber *-- InnerLatch
 
 @enduml
