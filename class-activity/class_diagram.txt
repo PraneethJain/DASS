@@ -1,0 +1,60 @@
+@startuml
+
+interface SubmarinePod {
+    + openOuterLatch(): void
+    + openInnerLatch(): void
+    + closeOuterLatch(): void
+    + closeInnerLatch(): void
+}
+
+interface ControlPanel {
+    + openOuterLatch(): void
+    + openInnerLatch(): void
+    + closeOuterLatch(): void
+    + closeInnerLatch(): void
+    + fillWithWater(): void
+    + drainWater(): void
+    + pauseFilling(): void
+    + pauseDraining(): void
+    + resumeFilling(): void
+    + resumeDraining(): void
+}
+
+class OuterLatch {
+    + isOpen(): boolean
+    + open(): void
+    + close(): void
+}
+
+class InnerLatch {
+    + isOpen(): boolean
+    + open(): void
+    + close(): void
+}
+
+class EntryExitChamber {
+    - outerLatch: OuterLatch
+    - innerLatch: InnerLatch
+    - waterFilled: boolean
+    - fillingPaused: boolean
+    - drainingPaused: boolean
+    + openOuterLatch(): void
+    + openInnerLatch(): void
+    + closeOuterLatch(): void
+    + closeInnerLatch(): void
+    + fillWithWater(): void
+    + drainWater(): void
+    + pauseFilling(): void
+    + pauseDraining(): void
+    + resumeFilling(): void
+    + resumeDraining(): void
+}
+
+SubmarinePod -- EntryExitChamber
+ControlPanel -- EntryExitChamber
+
+EntryExitChamber *-- ControlPanel
+EntryExitChamber *-- OuterLatch
+EntryExitChamber *-- InnerLatch
+
+@enduml
