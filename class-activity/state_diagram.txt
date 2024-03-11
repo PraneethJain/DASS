@@ -1,7 +1,5 @@
 @startuml
 
-[*] --> Ready
-
 state Ready {
     [*] --> Closed
     Closed --> Filling : fillWithWater()
