@@ -14,6 +14,8 @@ activate Outer
 Outer -> Outer: latch opening process
 Outer -> Chamber: outerLatchClosed()
 deactivate Outer
+Chamber -> ControlPanel: pauseFilling()
+ControlPanel -> Chamber: resumeFilling()
 Chamber -> Chamber: draining process
 Chamber -> Inner: openInnerLatch()
 activate Inner
