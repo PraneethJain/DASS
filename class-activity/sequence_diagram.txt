@@ -1,0 +1,25 @@
+@startuml
+
+actor ControlPanel
+participant "EntryExitChamber" as Chamber
+participant "OuterLatch" as Outer
+participant "InnerLatch" as Inner
+
+ControlPanel -> Chamber: fillWithWater()
+activate Chamber
+Chamber -> Chamber: filling process
+Chamber -> Chamber: fillComplete()
+Chamber -> Outer: openOuterLatch()
+activate Outer
+Outer -> Outer: latch opening process
+Outer -> Chamber: outerLatchClosed()
+deactivate Outer
+Chamber -> Chamber: draining process
+Chamber -> Inner: openInnerLatch()
+activate Inner
+Inner -> Inner: latch opening process
+Inner -> Chamber: innerLatchClosed()
+deactivate Inner
+Chamber -> ControlPanel: waterDrained()
+
+@enduml
