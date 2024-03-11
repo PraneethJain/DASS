@@ -1,0 +1,25 @@
+@startuml
+
+[*] --> Ready
+
+state Ready {
+    [*] --> Closed
+    Closed --> Filling : fillWithWater()
+    Filling --> OuterLatchOpen : fillComplete()
+}
+
+state OuterLatchOpen {
+    [*] --> OuterLatchClosed : closeOuterLatch()
+    OuterLatchClosed --> Draining : outerLatchClosed()
+}
+
+state Draining {
+    [*] --> InnerLatchOpen : drainWater()
+    InnerLatchOpen --> Ready : innerLatchClosed()
+}
+
+state Closed {
+    [*] --> OuterLatchClosed
+}
+
+@enduml
