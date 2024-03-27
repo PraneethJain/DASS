@@ -804,14 +804,29 @@ State diagrams for the most frequent and important use cases have been presented
 \section{Design Outline and Features}
 
 \subsection{Low Coupling}
+The design follows the principle of low coupling by separating concerns into distinct modules, such as User Management, Student Details, and Finance Management. Each module has a well-defined set of responsibilities and minimizes dependencies on other modules, allowing for easier maintenance and modification.
+
 \subsection{High Cohesion}
+The design promotes high cohesion by grouping related functionalities and data within the same module. For example, the Course and Batch Management module handles all aspects related to course definition, batch creation, student and faculty assignment, and class scheduling, ensuring that related operations are cohesively organized.
+
 \subsection{Separation of Concerns}
+The design separates different concerns into distinct modules, following the principle of separation of concerns. For instance, the User Management module handles user-related operations, while the Human Resource Management module focuses on employee-specific tasks, such as hiring, attendance tracking, and payroll processing.
+
 \subsection{Modularity}
+The design is structured as a modular system, with each module representing a distinct functional area. This modularity allows for better organization, maintainability, and scalability, as individual modules can be developed, tested, and updated independently.
+
 \subsection{Information Hiding}
+The design adheres to the principle of information hiding by encapsulating module-specific data and functionality within the respective modules. For example, the details of fee structure and invoicing are hidden within the Finance Management module, while the User Management module handles user-related information and operations.
+
 \subsection{Extensibility}
+The modular design promotes extensibility by allowing new functionalities or modules to be added without significantly impacting existing components. For instance, if a new requirement arises for managing hostels, a new module can be added to the system without disrupting other modules.
+
 \subsection{Reusability}
+The design encourages reusability by creating generic and reusable components or modules that can be shared across different parts of the system. For example, the Messaging System module can be reused for communication between different stakeholders, such as students, faculty, and administrators, reducing duplication of effort and promoting code reuse.
 
 \section{Reflection on our Design}
+
+These principles are integrated throughout the design to ensure a well-structured, maintainable, and scalable Institute Management System. The modular approach, clear separation of concerns, and adherence to principles like low coupling and high cohesion contribute to the overall quality and flexibility of the design.
 
 
 \end{document}
