@@ -80,6 +80,8 @@ use the following drive link to get access to the files in pdf, jpeg and staruml
 
 \pagebreak
 
+\section{Class Summaries}
+
 \begin{longtblr}[
   label = none,
   entry = none,
@@ -827,6 +829,23 @@ The design encourages reusability by creating generic and reusable components or
 \section{Reflection on our Design}
 
 These principles are integrated throughout the design to ensure a well-structured, maintainable, and scalable Institute Management System. The modular approach, clear separation of concerns, and adherence to principles like low coupling and high cohesion contribute to the overall quality and flexibility of the design.
+
+\subsection{Strongest Aspects}
+
+
+\subsubsection{Modular Architecture}
+The design follows a modular approach, separating concerns into distinct modules such as User Management, Student Details, Finance Management, and Course and Batch Management. This modular architecture promotes maintainability, scalability, and extensibility, as individual modules can be developed, tested, and updated independently without affecting the entire system.
+
+\subsubsection{Adherence to Design Principles}
+The design adheres to well-established design principles like low coupling, high cohesion, separation of concerns, and information hiding. This adherence ensures that the system is organized, maintainable, and flexible, reducing the complexity and dependencies between different components.
+
+\subsection{Weakest Aspects}
+
+\subsubsection{Potential Performance Bottlenecks}
+While the modular design promotes maintainability and extensibility, it may introduce performance bottlenecks or overhead due to inter-module communication and data transfer. Careful optimization and performance tuning may be required to ensure efficient system operation, especially in scenarios with high concurrency or large data sizes.
+
+\subsubsection{Complexity in Integration and Deployment}
+With multiple modules and potentially different technologies or frameworks involved, integrating and deploying the entire system can become complex. Although unit testing would be smooth due to the modular nature of the design, integration testing would be a tough due to the large number of modules themselves.
 
 
 \end{document}
